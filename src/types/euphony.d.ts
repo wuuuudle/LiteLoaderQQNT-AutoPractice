@@ -137,7 +137,7 @@ declare namespace euphony {
 
         getList(): SingleMessage[];
 
-        contentToString(): string;
+        contentToString(): string[];
 
         async toElements(): Promise<Element[]>;
 
