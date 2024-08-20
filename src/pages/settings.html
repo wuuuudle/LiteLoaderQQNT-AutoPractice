@@ -1,0 +1,38 @@
+<style>
+    input {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<setting-section data-title="通用">
+    <setting-panel>
+        <setting-list data-direction="column">
+            <setting-item>
+                <div>
+                    <setting-button id="actionNow" data-type="secondary">立即触发(调试功能)</setting-button>
+                    <setting-text data-type="secondary">手动触发一次发送。</setting-text>
+                </div>
+            </setting-item>
+            <setting-item>
+                <div>
+                    <setting-text>修仙群号</setting-text>
+                    <setting-text data-type="secondary">目标群号</setting-text>
+                    <input id="groupId" type="text"/>
+                    <setting-text id="groupNickName" data-type="secondary">群名称:</setting-text>
+                </div>
+            </setting-item>
+            <setting-item>
+                <div>
+                    <setting-text>小小QQ号</setting-text>
+                    <setting-text data-type="secondary">小小QQ号</setting-text>
+                    <input id="xiaoxiaoId" type="text"></input>
+                </div>
+            </setting-item>
+
+            <setting-item>
+                <setting-text data-type="secondary">自动修炼</setting-text>
+                <setting-switch id="auto_practice"></setting-switch>
+            </setting-item>
+        </setting-list>
+    </setting-panel>
+</setting-section>

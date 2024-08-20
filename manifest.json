@@ -1,0 +1,29 @@
+{
+  "manifest_version": 4,
+  "type": "extension",
+  "name": "小小自动修仙",
+  "slug": "xiaoxiao_auto_practice",
+  "description": "小小自动修仙插件",
+  "version": "1.0.0",
+  "icon": "./assets/icon.svg",
+  "thumb": "./assets/icon.svg",
+  "authors": [
+    {
+      "name": "wuuuudle",
+      "link": "https://github.com/wuuuudle"
+    }
+  ],
+  "platform": [
+    "win32",
+    "linux",
+    "darwin"
+  ],
+  "dependencies": [
+    "euphony"
+  ],
+  "injects": {
+    "main": "./main/index.js",
+    "preload": "./preload/index.js",
+    "renderer": "./renderer/index.js"
+  }
+}

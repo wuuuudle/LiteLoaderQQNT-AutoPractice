@@ -1,0 +1,26 @@
+{
+  "name": "xiaoxiao_auto_practice",
+  "version": "1.0.0",
+  "description": "A plugin template for LiteLoaderQQNT, It can auto auto practice with xiaoxiao",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint --cache --fix ./src/**/*.{js,cjs,mjs,ts,jsx,tsx}",
+    "build": "electron-vite build"
+  },
+  "author": "wuuuudle",
+  "license": "GPL-3.0-only",
+  "devDependencies": {
+    "@electron-toolkit/eslint-config-ts": "^2.0.0",
+    "@electron-toolkit/tsconfig": "^1.0.1",
+    "@typescript-eslint/eslint-plugin": "8.0.0-alpha.40",
+    "@typescript-eslint/parser": "8.0.0-alpha.40",
+    "electron": "^31.3.0",
+    "electron-vite": "^2.3.0",
+    "eslint": "^9.7.0",
+    "unplugin-zip-pack": "^1.0.2",
+    "vite": "^5.3.4",
+    "vite-plugin-checker": "^0.7.2",
+    "vite-plugin-cp": "^4.0.8"
+  }
+}
