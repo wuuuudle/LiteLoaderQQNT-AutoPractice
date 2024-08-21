@@ -28,6 +28,16 @@ jobs:
         cache: 'npm'
     - run: npm install
     - run: npm run build --if-present
+    - name: Create Git Tag
+      id: tag
+      run: |
+        VERSION=$(date +'%Y%m%d%H%M%S')
+        git config user.name "wuuuudle"
+        git config user.email "wuuuudle@gmail.com"
+        git tag -a "v$VERSION" -m "Release version v$VERSION"
+        git push origin "v$VERSION"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Create Release and Upload Artifacts
       uses: softprops/action-gh-release@v1
       with:
