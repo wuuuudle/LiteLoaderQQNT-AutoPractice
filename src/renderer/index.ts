@@ -78,6 +78,7 @@ if (webContentId === 2) // 主页面，注入以下代码
         const messageHandler = (config: Config) => {
             let index = 9;
             let nextRun: (config: Config) => Promise<void> = oncePractice;
+            let time_out: NodeJS.Timeout;
             return async (message: euphony.MessageChain, source: euphony.MessageSource) => {
                 const concat = source.getContact();
                 if (concat instanceof euphony.Member) { // 是成员消息
@@ -101,8 +102,13 @@ if (webContentId === 2) // 主页面，注入以下代码
                                 } else if (isBreakEnd) {
                                     nextRun = oncePractice;
                                 }
-                                if (isPracticeEnd || isBreakEnd)
+                                if (isPracticeEnd || isBreakEnd) {
                                     await nextRun(config);
+                                    clearInterval(time_out);
+                                    time_out = setInterval(async () => {
+                                        await nextRun(config);
+                                    }, 3 * 60 * 1000);
+                                }
                             }
                         }
                     }
