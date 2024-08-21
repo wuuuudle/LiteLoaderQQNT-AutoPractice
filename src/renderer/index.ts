@@ -58,6 +58,7 @@ export async function onSettingWindowCreated(view: HTMLElement) {
 if (webContentId === 2) // 主页面，注入以下代码
     (async function () {
         const eventChannel = euphony.EventChannel.withTriggers();
+        let time_out: NodeJS.Timeout;
 
         const oncePractice = async (config: Config) => {
             await euphony.Group.make(config.groupId)
@@ -78,7 +79,6 @@ if (webContentId === 2) // 主页面，注入以下代码
         const messageHandler = (config: Config) => {
             let index = 9;
             let nextRun: (config: Config) => Promise<void> = oncePractice;
-            let time_out: NodeJS.Timeout;
             return async (message: euphony.MessageChain, source: euphony.MessageSource) => {
                 const concat = source.getContact();
                 if (concat instanceof euphony.Member) { // 是成员消息
@@ -147,6 +147,7 @@ if (webContentId === 2) // 主页面，注入以下代码
             if (handler !== null)
                 eventChannel.unsubscribeEvent('receive-message', handler);
             handler = null;
+            clearInterval(time_out);
         })
 
     }());
