@@ -24,12 +24,12 @@ export async function onSettingWindowCreated(view: HTMLElement) {
         config.auto_practice = await AutoPractice.getAutoPracticeStatus();
         if (config.auto_practice) {
             autoPracticeElement.setAttribute('is-active', '');
-            groupIdElement.setAttribute('is-disabled', '');
-            xiaoxiaoIdElement.setAttribute('is-disabled', '');
+            groupIdElement.setAttribute('disabled', '');
+            xiaoxiaoIdElement.setAttribute('disabled', '');
         } else if (autoPracticeElement.hasAttribute('is-active')) {
             autoPracticeElement.removeAttribute('is-active');
-            groupIdElement.removeAttribute('is-disabled');
-            xiaoxiaoIdElement.removeAttribute('is-disabled');
+            groupIdElement.removeAttribute('disabled');
+            xiaoxiaoIdElement.removeAttribute('disabled');
         }
     }
 
@@ -44,15 +44,15 @@ export async function onSettingWindowCreated(view: HTMLElement) {
         if (autoPracticeElement.hasAttribute('is-active')) {
             // 取消自动修炼
             autoPracticeElement.removeAttribute('is-active');
-            groupIdElement.removeAttribute('is-disabled');
-            xiaoxiaoIdElement.removeAttribute('is-disabled');
+            groupIdElement.removeAttribute('disabled');
+            xiaoxiaoIdElement.removeAttribute('disabled');
             config.auto_practice = false;
             await AutoPractice.stopAutoPractice();
         } else {
             // 开始自动修炼
             autoPracticeElement.setAttribute('is-active', '');
-            groupIdElement.setAttribute('is-disabled', '');
-            xiaoxiaoIdElement.setAttribute('is-disabled', '');
+            groupIdElement.setAttribute('disabled', '');
+            xiaoxiaoIdElement.setAttribute('disabled', '');
             config.auto_practice = true;
             await AutoPractice.startAutoPractice();
         }
