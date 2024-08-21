@@ -42,6 +42,7 @@ jobs:
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.release.outputs.upload_url }}
+        asset_path: xiaoxiao_auto_practicet.zip
         asset_name: xiaoxiao_auto_practicet.zip
         asset_content_type: application/zip
 
