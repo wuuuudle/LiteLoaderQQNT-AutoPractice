@@ -6,7 +6,6 @@ name: Node.js CI
 on:
   push:
     branches: [ "master" ]
-    tags: ['v*.*.*']
   pull_request:
     branches: [ "master" ]
 
@@ -33,18 +32,14 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
-    # if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    
     steps:
-    - name: Use GitHub Release Action
-      uses: softprops/action-gh-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Upload Build Artifacts
-      uses: actions/upload-release-asset@v1
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/tags/')
       with:
-        upload_url: ${{ steps.release.outputs.upload_url }}
-        asset_path: xiaoxiao_auto_practicet.zip
-        asset_name: xiaoxiao_auto_practicet.zip
-        asset_content_type: application/zip
+        files: xiaoxiao_auto_practicet.zip
 
 
