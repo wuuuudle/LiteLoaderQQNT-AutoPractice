@@ -4,7 +4,7 @@
   "name": "小小自动修仙",
   "slug": "xiaoxiao_auto_practice",
   "description": "小小自动修仙插件",
-  "version": "1.0.0",
+  "version": "1.0.8",
   "icon": "./assets/icon.svg",
   "thumb": "./assets/icon.svg",
   "authors": [
