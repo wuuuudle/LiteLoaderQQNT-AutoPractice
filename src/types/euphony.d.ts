@@ -242,6 +242,8 @@ declare namespace euphony {
         getContact(): Contact;
 
         async recall(): Promise<void>;
+
+        async setMsgRead(): Promise<void>;
     }
 
     declare class EventChannel {

@@ -104,6 +104,7 @@ if (webContentId === 2) // 主页面，注入以下代码
                             const convertMessages = message.contentToString();
                             const isAtMe = convertMessages.some(item => item === `@${config.myName}` || `@${euphony.Client.getUid()}`);
                             if (isAtMe) { // 是at我的消息
+                                await source.setMsgRead();
                                 const isPracticeEnd = convertMessages.some(item => item.indexOf('本次修炼') !== -1); // 修炼结束
                                 const isBreakEnd = convertMessages.some(item => item.indexOf('突破') !== -1); // 突破结束
                                 if (isPracticeEnd) {

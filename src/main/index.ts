@@ -44,5 +44,19 @@ export const onBrowserWindowCreated = (window: BrowserWindow) => {
         if (window.webContents.getURL().indexOf('#/main/message') !== -1) {
             mainWindow = window;
         }
-    })
+    });
+    // hook ipc，调试使用
+    // const ipc_message_proxy = window.webContents._events['-ipc-message']?.[0] || window.webContents._events['-ipc-message'];
+    // const proxyIpcMsg = new Proxy(ipc_message_proxy, {
+    //     apply(target: any, thisArg: any, argArray: any[]): any {
+    //         console.log('proxyMsg', JSON.stringify(argArray));
+    //         return target.apply(thisArg, argArray);
+    //     }
+    // });
+    //
+    // if (window.webContents._events['-ipc-message']?.[0]) {
+    //     window.webContents._events['-ipc-message'][0] = proxyIpcMsg;
+    // } else {
+    //     window.webContents._events['-ipc-message'] = proxyIpcMsg;
+    // }
 };
