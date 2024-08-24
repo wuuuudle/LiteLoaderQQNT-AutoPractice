@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint --cache --fix ./src/**/*.{js,cjs,mjs,ts,jsx,tsx}",
+    "lint": "eslint --cache --fix ./src/**/*.ts",
     "build": "electron-vite build"
   },
   "author": "wuuuudle",

@@ -1,3 +1,7 @@
+import {AutoScript} from '../autoscript/base';
+import {AutoPracticeScript} from '../autoscript/practice';
+import {CreateHandler} from '../autoscript/handler';
+
 export async function onSettingWindowCreated(view: HTMLElement) {
     let config: Config = {
         groupId: '',
@@ -22,6 +26,7 @@ export async function onSettingWindowCreated(view: HTMLElement) {
         groupNickNameElement.innerText = `群名称: ${config.groupNickName} 我的群名称: ${config.myName}`;
         xiaoxiaoIdElement.value = config.xiaoxiaoId;
         config.auto_practice = await AutoPractice.getAutoPracticeStatus();
+        console.log('自动恢复', config.auto_practice);
         if (config.auto_practice) {
             autoPracticeElement.setAttribute('is-active', '');
             groupIdElement.setAttribute('disabled', '');
@@ -54,6 +59,7 @@ export async function onSettingWindowCreated(view: HTMLElement) {
             groupIdElement.setAttribute('disabled', '');
             xiaoxiaoIdElement.setAttribute('disabled', '');
             config.auto_practice = true;
+            console.log('调用 AutoPractice.startAutoPractice')
             await AutoPractice.startAutoPractice();
         }
         await LiteLoader.api.config.set('xiaoxiao_auto_practice', config);
@@ -67,72 +73,22 @@ if (webContentId === 2) // 主页面，注入以下代码
     (async function () {
         const eventChannel = euphony.EventChannel.withTriggers();
 
-        let practice_time_out: number | undefined = undefined;
+        const processors: Record<string, AutoScript> = {};
 
-        const oncePractice = async (config: Config) => {
-            await euphony.Group.make(config.groupId)
-                .sendMessage(
-                    new euphony.MessageChain()
-                        .append(euphony.At.fromUin(config.xiaoxiaoId))
-                        .append(new euphony.PlainText(' 修炼')));
-            if (practice_time_out === undefined)
-                practice_time_out = setInterval(async () => {
-                    await oncePractice(config);
-                }, 60 * 5 * 1000) as unknown as number;
-        }
+        eventChannel.subscribeEvent('receive-message', CreateHandler(processors));
 
-        let break_time_out: number | undefined = undefined;
-        const onceBreak = async (config: Config) => {
-            await euphony.Group.make(config.groupId)
-                .sendMessage(
-                    new euphony.MessageChain()
-                        .append(euphony.At.fromUin(config.xiaoxiaoId))
-                        .append(new euphony.PlainText(' 直接突破')));
-            if (break_time_out === undefined)
-                break_time_out = setInterval(async () => {
-                    await onceBreak(config);
-                }, 60 * 5 * 1000) as unknown as number;
-        }
-
-        const messageHandler = (config: Config) => {
-            let index = 9;
-            return async (message: euphony.MessageChain, source: euphony.MessageSource) => {
-                const concat = source.getContact();
-                if (concat instanceof euphony.Member) { // 是成员消息
-                    if (concat.getGroup().getId() === config.groupId) { // 是修仙群的消息
-                        if (concat.getId() === config.xiaoxiaoId) { // 是小小的消息
-                            const convertMessages = message.contentToString();
-                            const isAtMe = convertMessages.some(item => item === `@${config.myName}` || `@${euphony.Client.getUid()}`);
-                            if (isAtMe) { // 是at我的消息
-                                await source.setMsgRead();
-                                const isPracticeEnd = convertMessages.some(item => item.indexOf('本次修炼') !== -1); // 修炼结束
-                                const isBreakEnd = convertMessages.some(item => item.indexOf('突破') !== -1); // 突破结束
-                                if (isPracticeEnd) {
-                                    // todo: 这里突破判断很粗糙，固定修炼多少次直接突破
-                                    clearInterval(practice_time_out);
-                                    practice_time_out = undefined;
-                                    index = (index + 1) % 10;
-                                    if (index === 0) {
-                                        await onceBreak(config);
-                                    } else {
-                                        await oncePractice(config);
-                                    }
-                                } else if (isBreakEnd) {
-                                    clearInterval(break_time_out);
-                                    break_time_out = undefined;
-                                    await oncePractice(config);
-                                }
-                            }
-                        }
-                    }
-                }
-            };
-        }
-        let handler: ((message: euphony.MessageChain, source: euphony.MessageSource) => Promise<void>) | null = null;
-
-        // const config = await LiteLoader.api.config.get('xiaoxiao_auto_practice') as Config;
-        // handler = messageHandler(config);
-        // eventChannel.subscribeEvent('receive-message', handler);
+        // let break_time_out: number | undefined = undefined;
+        // const onceBreak = async (config: Config) => {
+        //     await euphony.Group.make(config.groupId)
+        //         .sendMessage(
+        //             new euphony.MessageChain()
+        //                 .append(euphony.At.fromUin(config.xiaoxiaoId))
+        //                 .append(new euphony.PlainText(' 直接突破')));
+        //     if (break_time_out === undefined)
+        //         break_time_out = setInterval(async () => {
+        //             await onceBreak(config);
+        //         }, 60 * 5 * 1000) as unknown as number;
+        // }
 
 
         AutoPracticeFromMain.fetchGroupNickName((_, uin: string) => {
@@ -146,27 +102,22 @@ if (webContentId === 2) // 主页面，注入以下代码
         });
 
         AutoPracticeFromMain.getAutoPracticeStatus(() => { // true是正在自动修炼，false是没有修炼
-            AutoPracticeToMain.getAutoPracticeStatus(handler !== null);
+            AutoPracticeToMain.getAutoPracticeStatus(
+                Object
+                    .values(processors)
+                    .filter(item => item instanceof AutoPracticeScript).length != 0);
         });
 
         AutoPracticeFromMain.startAutoPractice(async () => {
-            if (handler !== null) {
-                eventChannel.unsubscribeEvent('receive-message', handler);
-            }
+            processors[AutoPracticeScript.getName()] = new AutoPracticeScript();
             const config = await LiteLoader.api.config.get('xiaoxiao_auto_practice') as Config;
-            handler = eventChannel.subscribeEvent('receive-message', messageHandler(config));
-            await oncePractice(config);
-
+            const number = await processors[AutoPracticeScript.getName()].Run(config);
+            console.log('startAutoPractice', number);
         });
 
         AutoPracticeFromMain.stopAutoPractice(async () => {
-            if (handler !== null)
-                eventChannel.unsubscribeEvent('receive-message', handler);
-            handler = null;
-            clearInterval(practice_time_out);
-            practice_time_out = undefined;
-            clearInterval(break_time_out);
-            break_time_out = undefined;
+            Object.keys(processors).forEach(key => {
+                delete processors[key];
+            });
         })
-
     }());
