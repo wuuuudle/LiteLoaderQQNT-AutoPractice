@@ -70,28 +70,32 @@ if (webContentId === 2) // 主页面，注入以下代码
         let practice_time_out: number | undefined = undefined;
 
         const oncePractice = async (config: Config) => {
-            await euphony.Group.make(config.groupId)
-                .sendMessage(
-                    new euphony.MessageChain()
-                        .append(euphony.At.fromUin(config.xiaoxiaoId))
-                        .append(new euphony.PlainText(' 修炼')));
-            if (practice_time_out === undefined)
-                practice_time_out = setInterval(async () => {
-                    await oncePractice(config);
-                }, 60 * 5 * 1000) as unknown as number;
+            setTimeout(async ()=>{
+                await euphony.Group.make(config.groupId)
+                    .sendMessage(
+                        new euphony.MessageChain()
+                            .append(euphony.At.fromUin(config.xiaoxiaoId))
+                            .append(new euphony.PlainText(' 修炼')));
+                if (practice_time_out === undefined)
+                    practice_time_out = setInterval(async () => {
+                        await oncePractice(config);
+                    }, 60 * 5 * 1000) as unknown as number;
+            }, 1000);
         }
 
         let break_time_out: number | undefined = undefined;
         const onceBreak = async (config: Config) => {
-            await euphony.Group.make(config.groupId)
-                .sendMessage(
-                    new euphony.MessageChain()
-                        .append(euphony.At.fromUin(config.xiaoxiaoId))
-                        .append(new euphony.PlainText(' 直接突破')));
-            if (break_time_out === undefined)
-                break_time_out = setInterval(async () => {
-                    await onceBreak(config);
-                }, 60 * 5 * 1000) as unknown as number;
+            setTimeout(async ()=>{
+                await euphony.Group.make(config.groupId)
+                    .sendMessage(
+                        new euphony.MessageChain()
+                            .append(euphony.At.fromUin(config.xiaoxiaoId))
+                            .append(new euphony.PlainText(' 直接突破')));
+                if (break_time_out === undefined)
+                    break_time_out = setInterval(async () => {
+                        await onceBreak(config);
+                    }, 60 * 5 * 1000) as unknown as number;
+            }, 1000);
         }
 
         const messageHandler = (config: Config) => {
