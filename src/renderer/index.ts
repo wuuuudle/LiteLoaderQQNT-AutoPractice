@@ -1,7 +1,4 @@
-import {AutoScript} from '../autoscript/base';
-import {AutoPracticeResult, AutoPracticeScript} from '../autoscript/practice';
-import {CreateHandler} from '../autoscript/handler';
-import {AutoBreakResult, AutoBreakScript} from '../autoscript/break';
+import {main} from './main';
 
 export async function onSettingWindowCreated(view: HTMLElement) {
     let config: Config = {
@@ -109,6 +106,9 @@ export async function onSettingWindowCreated(view: HTMLElement) {
     autoPracticeElement.addEventListener('click', async () => {
         if (autoPracticeElement.hasAttribute('is-active')) {
             // 取消自动修炼
+            autoPracticeElement.setAttribute('is-disabled', '');
+            await AutoPractice.stopAutoPractice();
+            autoPracticeElement.removeAttribute('is-disabled');
             autoPracticeElement.removeAttribute('is-active');
             groupIdElement.removeAttribute('disabled');
             xiaoxiaoIdElement.removeAttribute('disabled');
@@ -117,7 +117,6 @@ export async function onSettingWindowCreated(view: HTMLElement) {
             autoBreakUseElement.removeAttribute('is-disabled');
             autoBreakUsePillElement.removeAttribute('is-disabled');
             config.autoPractice = false;
-            await AutoPractice.stopAutoPractice();
         } else {
             // 开始自动修炼
             autoPracticeElement.setAttribute('is-active', '');
@@ -138,88 +137,4 @@ export async function onSettingWindowCreated(view: HTMLElement) {
 }
 
 if (webContentId === 2) // 主页面，注入以下代码
-    (async function () {
-        const eventChannel = euphony.EventChannel.withTriggers();
-
-        const processors: Record<string, AutoScript> = {};
-        let shouldStop: boolean = false;
-        eventChannel.subscribeEvent('receive-message', CreateHandler(processors));
-
-        // let break_time_out: number | undefined = undefined;
-        // const onceBreak = async (config: Config) => {
-        //     await euphony.Group.make(config.groupId)
-        //         .sendMessage(
-        //             new euphony.MessageChain()
-        //                 .append(euphony.At.fromUin(config.xiaoxiaoId))
-        //                 .append(new euphony.PlainText(' 直接突破')));
-        //     if (break_time_out === undefined)
-        //         break_time_out = setInterval(async () => {
-        //             await onceBreak(config);
-        //         }, 60 * 5 * 1000) as unknown as number;
-        // }
-
-
-        AutoPracticeFromMain.fetchGroupNickName((_, uin: string) => {
-            const name = euphony.Group.make(uin).getName();
-            AutoPracticeToMain.fetchGroupNickName(name);
-        });
-
-        AutoPracticeFromMain.fetchMyNameInGroup((_, uin: string) => {
-            const name = euphony.Group.make(uin).getMemberFromUin(euphony.Client.getUin()).getCardName();
-            AutoPracticeToMain.fetchMyNameInGroup(name);
-        });
-
-        AutoPracticeFromMain.getAutoPracticeStatus(() => { // true是正在自动修炼，false是没有修炼
-            AutoPracticeToMain.getAutoPracticeStatus(
-                Object
-                    .values(processors)
-                    .filter(item => item instanceof AutoPracticeScript).length != 0);
-        });
-
-        AutoPracticeFromMain.startAutoPractice(async () => {
-            shouldStop = false;
-            const config = await LiteLoader.api.config.get('xiaoxiao_auto_practice') as Config;
-            // 准备处理器
-            processors[AutoPracticeScript.getName()] = new AutoPracticeScript();
-            if (config.autoBreak.use)
-                processors[AutoBreakScript.getName()] = new AutoBreakScript();
-
-            // eslint-disable-next-line no-async-promise-executor
-            new Promise(async (resolve) => {
-                let remain = -1;
-                if (config.autoBreak.use)
-                    do {
-                        const breaks = await processors[AutoBreakScript.getName()].Run(config) as AutoBreakResult;
-                        remain = breaks.remainCultivation;
-                    } while (remain < 0);
-                while (true) {
-                    if (shouldStop)
-                        break;
-                    const config = await LiteLoader.api.config.get('xiaoxiao_auto_practice') as Config;
-                    if (config.autoBreak.use) {
-                        if (remain < 0) {
-                            // remain 小于0，突破
-                            const breaks = await processors[AutoBreakScript.getName()].Run(config) as AutoBreakResult;
-                            remain = breaks.remainCultivation;
-                        } else {
-                            // 修为不足，修炼
-                            const practices = await processors[AutoPracticeScript.getName()].Run(config) as AutoPracticeResult;
-                            remain = remain - practices.receiveCultivation;
-                        }
-                    } else {
-                        // 不管剩余修为多少，只修炼
-                        await processors[AutoPracticeScript.getName()].Run(config);
-                    }
-                }
-                console.log('Stop Success');
-                resolve('Stop Success');
-            });
-        });
-
-        AutoPracticeFromMain.stopAutoPractice(async () => {
-            shouldStop = true;
-            Object.keys(processors).forEach(key => {
-                delete processors[key];
-            });
-        })
-    }());
+    main();

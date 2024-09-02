@@ -22,7 +22,7 @@ export abstract class AutoScript {
 
     abstract _process(message: euphony.MessageChain, source: euphony.MessageSource): AutoScriptResult;
 
-    async Run(config: Config): Promise<AutoScriptResult> {
+    async _Run(config: Config): Promise<AutoScriptResult> {
         setTimeout(async () => {
             await this._run(config);
         }, config.delayTime);
@@ -41,6 +41,14 @@ export abstract class AutoScript {
             }
             this.resolve = undefined;
         });
+    }
+
+    async Run(config: Config): Promise<AutoScriptResult> {
+        let result: AutoScriptResult;
+        do {
+            result = await this._Run(config);
+        } while (result.isSuccess === false); // 调用超时
+        return result;
     }
 
     async ProcessHandle(message: euphony.MessageChain, source: euphony.MessageSource): Promise<boolean> {
