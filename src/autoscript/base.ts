@@ -23,7 +23,9 @@ export abstract class AutoScript {
     abstract _process(message: euphony.MessageChain, source: euphony.MessageSource): AutoScriptResult;
 
     async Run(config: Config): Promise<AutoScriptResult> {
-        await this._run(config);
+        setTimeout(async () => {
+            await this._run(config);
+        }, config.delayTime);
         return await new Promise<AutoScriptResult>((resolve) => {
             this.resolve = resolve;
             this.timeoutId = setTimeout(() => {
@@ -31,7 +33,7 @@ export abstract class AutoScript {
                     this.resolve({isSuccess: false});
                     this.resolve = undefined;
                 }
-            }, 5 * 60 * 1000);
+            }, config.timeoutTime);
         }).finally(() => {
             if (this.timeoutId !== null) {
                 clearTimeout(this.timeoutId);

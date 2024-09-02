@@ -28,7 +28,6 @@ export class AutoPracticeScript extends AutoScript {
     }
 
     _process(_message: euphony.MessageChain, _source: euphony.MessageSource): AutoPracticeResult {
-        console.log('process');
         const regex = /本次修炼增加(\d+)修为/
         const match = this.messageList[5].match(regex);
         if (match)
