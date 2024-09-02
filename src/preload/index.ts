@@ -21,4 +21,5 @@ contextBridge.exposeInMainWorld('AutoPracticeToMain', {
     fetchGroupNickName: (NickName: string) => ipcRenderer.send('auto_practice_to_main.fetch_group_nick_name', NickName),
     fetchMyNameInGroup: (CardName: string) => ipcRenderer.send('auto_practice_to_main.fetch_my_name_in_group', CardName),
     getAutoPracticeStatus: (status: boolean) => ipcRenderer.send('auto_practice_to_main.get_auto_practice_status', status),
+    stopAutoPractice: (message: string) => ipcRenderer.send('auto_practice_to_main.stop_auto_practice', message),
 });

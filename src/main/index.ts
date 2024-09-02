@@ -1,4 +1,4 @@
-import {BrowserWindow, ipcMain} from 'electron';
+import {BrowserWindow, ipcMain, dialog} from 'electron';
 
 let mainWindow: BrowserWindow;
 ipcMain.handle('auto_practice.fetch_group_nick_name', async (_, arg) => {
@@ -26,14 +26,20 @@ ipcMain.handle('auto_practice.get_auto_practice_status', async (_) => {
         })
         mainWindow.webContents.send('auto_practice_from_main.get_auto_practice_status');
     });
-})
+});
 
 ipcMain.handle('auto_practice.start_auto_practice', (_) => {
     mainWindow.webContents.send('auto_practice_from_main.start_auto_practice');
 });
 
-ipcMain.handle('auto_practice.stop_auto_practice', (_) => {
-    mainWindow.webContents.send('auto_practice_from_main.stop_auto_practice');
+ipcMain.handle('auto_practice.stop_auto_practice', async (_) => {
+    return await new Promise(resolve => {
+        ipcMain.once('auto_practice_to_main.stop_auto_practice', async (_, response) => {
+            await dialog.showMessageBox({type: 'info', title: '小小自动修炼', message: response});
+            resolve(response);
+        })
+        mainWindow.webContents.send('auto_practice_from_main.stop_auto_practice');
+    });
 });
 
 

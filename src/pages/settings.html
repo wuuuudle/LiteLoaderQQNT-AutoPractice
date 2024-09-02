@@ -7,12 +7,12 @@
 <setting-section data-title="通用">
     <setting-panel>
         <setting-list data-direction="column">
-<!--            <setting-item>-->
-<!--                <div>-->
-<!--                    <setting-button id="actionNow" data-type="secondary">立即触发(调试功能)</setting-button>-->
-<!--                    <setting-text data-type="secondary">手动触发一次发送。</setting-text>-->
-<!--                </div>-->
-<!--            </setting-item>-->
+            <!--            <setting-item>-->
+            <!--                <div>-->
+            <!--                    <setting-button id="actionNow" data-type="secondary">立即触发(调试功能)</setting-button>-->
+            <!--                    <setting-text data-type="secondary">手动触发一次发送。</setting-text>-->
+            <!--                </div>-->
+            <!--            </setting-item>-->
             <setting-item>
                 <div>
                     <setting-text>修仙群号</setting-text>
@@ -32,6 +32,34 @@
             <setting-item>
                 <setting-text data-type="secondary">自动修炼</setting-text>
                 <setting-switch id="auto_practice"></setting-switch>
+            </setting-item>
+        </setting-list>
+    </setting-panel>
+</setting-section>
+<setting-section data-title="自动修炼配置">
+    <setting-panel>
+        <setting-list data-direction="column">
+            <setting-item>
+                <div>
+                    <setting-text>延迟时间</setting-text>
+                    <setting-text data-type="secondary">指令发送延迟时间(ms)</setting-text>
+                    <input id="delayTime" type="text"></input>
+                </div>
+            </setting-item>
+            <setting-item>
+                <div>
+                    <setting-text>超时时间</setting-text>
+                    <setting-text data-type="secondary">指令超时重发时间(ms)</setting-text>
+                    <input id="timeoutTime" type="text"></input>
+                </div>
+            </setting-item>
+            <setting-item>
+                <setting-text data-type="secondary">自动突破</setting-text>
+                <setting-switch id="auto_break_use"></setting-switch>
+            </setting-item>
+            <setting-item>
+                <setting-text data-type="secondary">渡厄突破</setting-text>
+                <setting-switch id="auto_break_use_pill"></setting-switch>
             </setting-item>
         </setting-list>
     </setting-panel>
